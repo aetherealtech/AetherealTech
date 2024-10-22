@@ -1,3 +1,5 @@
+# syntax=docker.io/docker/dockerfile:1.7-labs
+
 # Dockerfile
 FROM node:23.0.0-alpine
 
@@ -10,7 +12,7 @@ RUN apk update && apk upgrade
 RUN apk add git
 
 # copy the app, note .dockerignore
-COPY . /usr/src/nuxt-app/
+COPY --exclude=cypress/** --exclude=cypress.config.ts . /usr/src/nuxt-app/
 RUN npm install
 RUN npm run build
 
