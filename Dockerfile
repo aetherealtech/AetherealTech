@@ -14,7 +14,6 @@ RUN apk add git
 # copy the app, note .dockerignore
 COPY --exclude=cypress/** --exclude=cypress.config.ts . /usr/src/nuxt-app/
 RUN npm install
-RUN npm run build
 
 EXPOSE 3000
 
