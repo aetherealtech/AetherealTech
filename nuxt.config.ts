@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   primevue: {
     /* Options */
   },
+  srcDir: 'src/',
   typescript: {
     typeCheck: true
   }
