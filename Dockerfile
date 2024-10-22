@@ -1,5 +1,5 @@
 # Dockerfile
-FROM node:21.7.3-alpine
+FROM node:23.0.0-alpine
 
 # create destination directory
 RUN mkdir -p /usr/src/nuxt-app
