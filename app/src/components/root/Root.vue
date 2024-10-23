@@ -4,19 +4,52 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 
 <script setup lang="ts">
 import type {MenuItem} from "primevue/menuitem";
-import type {RootViewModel} from "./root-viewmodel";
+import type {PageContent, RootViewModel} from "./RootViewModel";
+import {type Component, computed, type Ref} from 'vue'
+
+import Home from "../home/Home.vue";
+import About from "../about/About.vue";
+import Contact from "../contact/Contact.vue";
+import Blog from "../blog/Blog.vue";
+
+import {useObservable} from "@vueuse/rxjs";
 
 const props = defineProps<{
   viewModel: RootViewModel;
 }>()
 
-const items: MenuItem[] = props.viewModel.pages
+const viewModel = props.viewModel;
+
+const items: MenuItem[] = viewModel.pages
     .map((page) => {
       return {
         label: page.label,
-        url: page.path
+        command: (_) => page.select()
       }
     });
+
+function assertNever(x: never): never {
+  throw new Error("Unexpected object: " + x);
+}
+
+const contentViewModel: Ref<PageContent | null> = useObservable(viewModel.content)
+
+const content: Ref<Component | null> = computed(() => {
+  const currentContentViewModel = contentViewModel.value
+
+  if(currentContentViewModel == null)
+    return null;
+
+  switch (currentContentViewModel.type) {
+    case 'home': return Home;
+    case 'about': return About;
+    case 'contact': return Contact;
+    case 'blog': return Blog;
+    default:
+      return assertNever(currentContentViewModel)
+  }
+})
+
 </script>
 
 <template>
@@ -28,6 +61,6 @@ const items: MenuItem[] = props.viewModel.pages
         </svg>
       </template>
     </Menubar>
-    <NuxtPage />
+    <component :is="content" v-if="content != null" :view-model="contentViewModel"></component>
   </div>
 </template>

@@ -3,7 +3,11 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 </script>
 
 <script setup lang="ts">
-//
+import type {ContactViewModel} from "./ContactViewModel";
+
+defineProps<{
+  viewModel: ContactViewModel;
+}>()
 </script>
 
 <template>
