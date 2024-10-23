@@ -10,8 +10,8 @@ services:
           path: .
           target: /usr/src/nuxt-app
           ignore:
-            - cypress/**
-            - cypress.config.ts
+            - app/**
+            - uitests/**
             - node_modules/
         - action: rebuild
           path: package.json
