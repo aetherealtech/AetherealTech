@@ -4,7 +4,7 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 
 <script setup lang="ts">
 import type {MenuItem} from "primevue/menuitem";
-import type {PageContent, RootViewModel} from "./RootViewModel";
+import type {PageContent, RootViewModel} from "applogic";
 import {type Component, computed, type Ref} from 'vue'
 
 import Home from "../home/Home.vue";

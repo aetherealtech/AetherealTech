@@ -3,7 +3,8 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 </script>
 
 <script setup lang="ts">
-import {Root, RootViewModelProd} from 'app'
+import {Root} from 'app'
+import {RootViewModelProd} from 'applogic'
 
 const route = useRequestURL();
 

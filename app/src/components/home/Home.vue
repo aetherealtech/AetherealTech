@@ -4,7 +4,7 @@ import 'primevue/resources/themes/aura-light-green/theme.css'
 
 <script setup lang="ts">
 import { type Ref, ref } from "vue";
-import type {HomeViewModel} from "./HomeViewModel";
+import type {HomeViewModel} from "applogic";
 
 defineProps<{
   viewModel: HomeViewModel;

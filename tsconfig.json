@@ -5,5 +5,9 @@
     "types": [
       "jest"
     ]
-  }
+  },
+  "exclude": [
+    "app/**",
+    "uitests/**"
+  ]
 }

@@ -1,4 +1,4 @@
-import {type Page, type PageContent, type RootViewModel} from 'app'
+import {type Page, type PageContent, type RootViewModel} from 'applogic'
 import {Subject, BehaviorSubject, type Observable} from "rxjs";
 
 declare global {

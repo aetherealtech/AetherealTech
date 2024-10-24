@@ -1,4 +1,4 @@
-import {type ContactViewModel} from 'app'
+import {type ContactViewModel} from 'applogic'
 
 export class ContactViewModelStub implements ContactViewModel {
 
