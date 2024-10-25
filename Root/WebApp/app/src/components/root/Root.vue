@@ -8,7 +8,7 @@ import type {PageContent, RootViewModel} from "applogic";
 import {type Component, computed, type Ref} from 'vue'
 
 import { Home } from "home";
-import About from "../about/About.vue";
+import { About } from "about";
 import Contact from "../contact/Contact.vue";
 import Blog from "../blog/Blog.vue";
 

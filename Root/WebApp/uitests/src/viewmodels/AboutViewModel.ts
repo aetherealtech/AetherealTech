@@ -1,4 +1,4 @@
-import {type AboutViewModel} from 'applogic'
+import {type AboutViewModel} from 'aboutlogic'
 
 export class AboutViewModelStub implements AboutViewModel {
 
