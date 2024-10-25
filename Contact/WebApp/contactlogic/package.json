@@ -1,30 +1,24 @@
 {
-  "name": "applogic",
+  "name": "contactlogic",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/applogic.umd.cjs",
-  "module": "./dist/applogic.js",
+  "main": "./dist/contactlogic.umd.cjs",
+  "module": "./dist/contactlogic.js",
   "types": "./dist/index.d.ts",
   "exports": {
     "import": {
-      "default": "./dist/applogic.js",
+      "default": "./dist/contactlogic.js",
       "types": "./dist/index.d.ts"
     },
     "require": {
-      "default": "./dist/applogic.umd.cjs",
+      "default": "./dist/contactlogic.umd.cjs",
       "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
     "build": "vite build && tsc -b --emitDeclarationOnly",
     "test": "cucumber-js -p default"
-  },
-  "dependencies": {
-    "aboutlogic": "file:../../../../About/WebApp/aboutlogic",
-    "contactlogic": "file:../../../../Contact/WebApp/contactlogic",
-    "homelogic": "file:../../../../Home/WebApp/homelogic",
-    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.9.0",
@@ -34,7 +28,7 @@
     "chai": "^5.1.2",
     "cucumber-tsflow": "^4.4.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3",
-    "vite": "^5.4.8"
+    "typescript": "^5.6.2",
+    "vite": "^5.4.9"
   }
 }

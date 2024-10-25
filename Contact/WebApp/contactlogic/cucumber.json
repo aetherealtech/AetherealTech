@@ -1,0 +1,16 @@
+{
+  "default": {
+    "import": [
+      "./features/**/*.ts"
+    ],
+    "loader": [
+      "ts-node/esm"
+    ],
+    "format": [
+      "progress-bar"
+    ],
+    "formatOptions": {
+      "snippetInterface": "synchronous"
+    }
+  }
+}

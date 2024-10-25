@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "aboutlogic": "file:../../../Home/WebApp/aboutlogic",
+    "aboutlogic": "file:../../../About/WebApp/aboutlogic",
+    "contactlogic": "file:../../../Contact/WebApp/contactlogic",
     "homelogic": "file:../../../Home/WebApp/homelogic",
     "primevue": "^3.52.0",
     "vue": "^3.5.12"

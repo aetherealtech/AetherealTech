@@ -13,6 +13,7 @@
   "dependencies": {
     "@vueuse/rxjs": "^11.1.0",
     "about": "file:../../../About/WebApp",
+    "contact": "file:../../../Contact/WebApp",
     "home": "file:../../../Home/WebApp",
     "primevue": "^3.52.0",
     "rxjs": "^7.8.1",
