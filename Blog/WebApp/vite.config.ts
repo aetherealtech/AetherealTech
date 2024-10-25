@@ -9,9 +9,9 @@ export default defineConfig({
         lib: {
             // src/index.ts is where we have exported the component(s)
             entry: resolve(__dirname, "src/index.ts"),
-            name: "About",
+            name: "Blog",
             // the name of the output files when the build is run
-            fileName: "about",
+            fileName: "blog",
         },
         rollupOptions: {
             // make sure to externalize deps that shouldn't be bundled

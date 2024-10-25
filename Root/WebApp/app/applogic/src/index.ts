@@ -1,2 +1,1 @@
-export * from "./root/RootViewModel.js"
-export * from "./blog/BlogViewModel.js"
+export * from "./RootViewModel.js"

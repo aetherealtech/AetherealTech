@@ -10,7 +10,7 @@ import {type Component, computed, type Ref} from 'vue'
 import { Home } from "home";
 import { About } from "about";
 import { Contact } from "contact";
-import Blog from "../blog/Blog.vue";
+import { Blog } from "blog";
 
 import {useObservable} from "@vueuse/rxjs";
 

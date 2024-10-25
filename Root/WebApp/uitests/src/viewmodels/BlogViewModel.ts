@@ -1,4 +1,4 @@
-import {type BlogViewModel} from 'applogic'
+import {type BlogViewModel} from 'bloglogic'
 
 export class BlogViewModelStub implements BlogViewModel {
 

@@ -1,3 +1,3 @@
-import Root from './components/root/Root.vue'
+import Root from './Root.vue'
 
 export { Root };
