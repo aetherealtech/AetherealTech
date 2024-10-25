@@ -1,7 +1,7 @@
-import {type HomeViewModel, HomeViewModelProd} from "../home/HomeViewModel";
-import {type AboutViewModel, AboutViewModelProd} from "../about/AboutViewModel";
-import {type ContactViewModel, ContactViewModelProd} from "../contact/ContactViewModel";
-import {type BlogViewModel, BlogViewModelProd} from "../blog/BlogViewModel";
+import {type HomeViewModel, HomeViewModelProd} from "homelogic";
+import {type AboutViewModel, AboutViewModelProd} from "../about/AboutViewModel.js";
+import {type ContactViewModel, ContactViewModelProd} from "../contact/ContactViewModel.js";
+import {type BlogViewModel, BlogViewModelProd} from "../blog/BlogViewModel.js";
 import {BehaviorSubject, type Observable} from "rxjs";
 
 export type HomePageContent = HomeViewModel & {

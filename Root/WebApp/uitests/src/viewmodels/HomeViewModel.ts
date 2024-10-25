@@ -1,4 +1,4 @@
-import {type HomeViewModel} from 'applogic'
+import {type HomeViewModel} from 'homelogic'
 
 export class HomeViewModelStub implements HomeViewModel {
     blahblah: string = ""

@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-cucumber
 dist-ssr
 *.local
 
@@ -23,8 +24,4 @@ dist-ssr
 *.sln
 *.sw?
 
-**/*.tsbuildinfo
-
-cypress/screenshots
-cypress/videos
-cypress/snapshots/*/__diff_output__
+*.tsbuildinfo

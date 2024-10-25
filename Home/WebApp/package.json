@@ -1,0 +1,36 @@
+{
+  "name": "home",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/home.umd.cjs",
+  "module": "./dist/home.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": {
+      "default": "./dist/home.js",
+      "types": "./dist/index.d.ts"
+    },
+    "require": {
+      "default": "./dist/home.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vue-tsc -b --emitDeclarationOnly"
+  },
+  "dependencies": {
+    "primevue": "^3.52.0",
+    "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.1.4",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.9",
+    "vue-tsc": "^2.1.6"
+  },
+  "workspaces": [
+    "./homelogic"
+  ]
+}

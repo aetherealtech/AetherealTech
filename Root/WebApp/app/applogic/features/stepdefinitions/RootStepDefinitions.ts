@@ -1,7 +1,10 @@
-import {binding, when, then, after} from "cucumber-tsflow";
-import {type PageContent, RootViewModelProd} from "../../src";
+import {binding} from "cucumber-tsflow/dist/binding-decorator.js"
+import {when, then} from "cucumber-tsflow/dist/step-definition-decorators.js"
+import {after} from "cucumber-tsflow/dist/hook-decorators.js"
+
+import {type PageContent, RootViewModelProd} from "../../src/root/RootViewModel.js";
 import {Subscription} from "rxjs";
-import {type Fixture} from "../support/Fixtures";
+import {type Fixture} from "../support/Fixtures.js";
 import {expect} from 'chai'
 
 declare module "rxjs" {
