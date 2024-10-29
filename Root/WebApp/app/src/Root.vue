@@ -12,6 +12,8 @@ import { About } from "about";
 import { Contact } from "contact";
 import { Blog } from "blog";
 
+import NotFound from './components/NotFound.vue'
+
 import {useObservable} from "@vueuse/rxjs";
 
 const props = defineProps<{
@@ -34,11 +36,11 @@ function assertNever(x: never): never {
 
 const contentViewModel: Ref<PageContent | null> = useObservable(viewModel.content)
 
-const content: Ref<Component | null> = computed(() => {
+const content: Ref<Component> = computed(() => {
   const currentContentViewModel = contentViewModel.value
 
   if(currentContentViewModel == null)
-    return null;
+    return NotFound;
 
   switch (currentContentViewModel.type) {
     case 'home': return Home;
@@ -61,6 +63,6 @@ const content: Ref<Component | null> = computed(() => {
         </svg>
       </template>
     </Menubar>
-    <component :is="content" v-if="content != null" :view-model="contentViewModel"></component>
+    <component :is="content" :view-model="contentViewModel"></component>
   </div>
 </template>
