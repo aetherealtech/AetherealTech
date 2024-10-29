@@ -32,16 +32,20 @@ export type RootViewModel = {
     content: Observable<PageContent | null>
 }
 
+export type PageRouteDescriptor = {
+    label: string;
+    route: string
+    contentFactory: () => PageContent
+}
+
 class PageRoute implements Page {
     constructor(
-        label: string,
-        route: string,
-        contentFactory: () => PageContent,
+        descriptor: PageRouteDescriptor,
         content: BehaviorSubject<PageContent | null>
     ) {
-        this.label = label
-        this.route = route
-        this.contentFactory = contentFactory
+        this.label = descriptor.label
+        this.route = descriptor.route
+        this.contentFactory = descriptor.contentFactory
 
         this._content = content
     }
@@ -60,55 +64,66 @@ class PageRoute implements Page {
 }
 
 export class RootViewModelProd implements RootViewModel {
-    pages: Page[]
-    get content(): Observable<PageContent | null> { return this._content }
+    public get pages(): Page[] { return this._pageRoutes }
+    public get content(): Observable<PageContent | null> { return this._content }
 
-    constructor(
-        path: string
+    public constructor(
+        path: string,
+        pages: PageRouteDescriptor[] = RootViewModelProd.defaultPages()
     ) {
-        const homePage = new PageRoute(
-            "Home",
-            "/",
-            () => ({ type: "home", ...new HomeViewModelProd() }),
-            this._content
-        )
+        this._pageRoutes = pages
+            .map(page => new PageRoute(page, this._content))
 
-        const aboutPage = new PageRoute(
-            "About",
-            "/about",
-            () => ({ type: "about", ...new AboutViewModelProd() }),
-            this._content
-        )
+        this.navigate(path);
 
-        const contactPage = new PageRoute(
-            "Contact",
-            "/contact",
-            () => ({ type: "contact", ...new ContactViewModelProd() }),
-            this._content
-        )
+        if(window != undefined) {
+            window.addEventListener("popstate", _ => {
+                this.navigate(document.location.pathname)
+            })
+        }
+    }
 
-        const blogPage = new PageRoute(
-            "Blog",
-            "/blog",
-            () => ({ type: "blog", ...new BlogViewModelProd() }),
-            this._content
-        )
+    public static defaultPages() {
+        const homePage: PageRouteDescriptor = {
+            label: "Home",
+            route: "/",
+            contentFactory: () => ({type: "home", ...new HomeViewModelProd()})
+        }
 
-        const pages = [
+        const aboutPage: PageRouteDescriptor = {
+            label: "About",
+            route: "/about",
+            contentFactory: () => ({type: "about", ...new AboutViewModelProd()})
+        }
+
+        const contactPage: PageRouteDescriptor = {
+            label: "Contact",
+            route: "/contact",
+            contentFactory: () => ({type: "contact", ...new ContactViewModelProd()})
+        }
+
+        const blogPage: PageRouteDescriptor = {
+            label: "Blog",
+            route: "/blog",
+            contentFactory: () => ({type: "blog", ...new BlogViewModelProd()})
+        }
+
+        return [
             homePage,
             aboutPage,
             contactPage,
             blogPage,
         ]
-
-        this.pages = pages;
-
-        const currentPage: PageRoute | undefined = pages
-            .find((page) => page.route == path)
-
-        if(currentPage != undefined)
-            this._content.next(currentPage.contentFactory())
     }
 
     private readonly _content = new BehaviorSubject<PageContent | null>(null)
+    private readonly _pageRoutes: PageRoute[]
+
+    private navigate(path: string) {
+        const currentPage: PageRoute | undefined = this._pageRoutes
+            .find((page) => page.route == path)
+
+        if (currentPage != undefined)
+            this._content.next(currentPage.contentFactory())
+    }
 }

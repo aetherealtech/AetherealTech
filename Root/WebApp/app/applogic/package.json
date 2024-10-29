@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "vite build && tsc -b --emitDeclarationOnly",
-    "test": "cucumber-js -p default"
+    "test": "cucumber-js -p default --tags \"not @Ignore\""
   },
   "dependencies": {
     "aboutlogic": "file:../../../../About/WebApp/aboutlogic",
@@ -35,6 +35,7 @@
     "chai": "^5.1.2",
     "cucumber-tsflow": "^4.4.4",
     "ts-node": "^10.9.2",
+    "typemoq": "^2.1.0",
     "typescript": "^5.5.3",
     "vite": "^5.4.8"
   }
