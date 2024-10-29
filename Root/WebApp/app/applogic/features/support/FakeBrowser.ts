@@ -6,6 +6,13 @@ type FakeDocument = {
     currentLocation: URL
 }
 
+class LocationUrlAdapter extends URL implements Location {
+    get ancestorOrigins(): DOMStringList { return null }
+    assign(_: string | URL) { }
+    reload() { }
+    replace(_: string | URL) { }
+}
+
 function fakeDocument(): FakeDocument {
     const mockDocument = TypeMoq.Mock.ofType<Document>()
 
@@ -16,13 +23,7 @@ function fakeDocument(): FakeDocument {
 
     mockDocument.setup(d => d.location)
         .returns(() => {
-            return {
-                ...fakeDocument.currentLocation,
-                ancestorOrigins: null,
-                assign(_: string | URL) { },
-                reload() { },
-                replace(_: string | URL) { }
-            }
+            return new LocationUrlAdapter(fakeDocument.currentLocation)
         })
 
     return fakeDocument
@@ -157,17 +158,16 @@ function fakeWindow(document: FakeDocument): FakeWindow {
 }
 
 export class FakeBrowser {
+    static readonly instance: FakeBrowser = new FakeBrowser()
+
     get window(): Window & typeof globalThis { return this._fakeWindow.window }
     get document(): Document { return this._fakeDocument.document }
 
     setHistory(history: string[]) { this._fakeWindow.setHistory(history) }
 
-    constructor() {
+    private constructor() {
         this._fakeDocument = fakeDocument()
         this._fakeWindow = fakeWindow(this._fakeDocument)
-
-        globalThis.window = this.window
-        globalThis.document = this.document
     }
 
     private readonly _fakeWindow: FakeWindow

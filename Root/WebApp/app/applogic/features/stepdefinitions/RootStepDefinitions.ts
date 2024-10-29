@@ -7,6 +7,7 @@ import {
     type BlogPageContent,
     type ContactPageContent,
     type HomePageContent,
+    type Page,
     type PageContent,
     type PageRouteDescriptor,
     RootViewModelProd
@@ -20,7 +21,7 @@ import {Subscription} from "rxjs";
 import {type Fixture} from "../support/Fixtures.js";
 import {expect} from 'chai'
 import * as TypeMoq from "typemoq";
-import { FakeBrowser } from '../support/FakeBrowser.js'
+import {FakeBrowser} from '../support/FakeBrowser.js'
 
 declare module "rxjs" {
     interface Subscription {
@@ -66,7 +67,7 @@ export class RootStepDefinitions {
 
     @given('{Browser}')
     public givenBrowser(browserFixture: Fixture<FakeBrowser>): void {
-        browserFixture.value = new FakeBrowser()
+        browserFixture.value = FakeBrowser.instance
     }
 
     @given('Any {Text}')
@@ -77,6 +78,22 @@ export class RootStepDefinitions {
     @given('Any {Page}')
     public givenAnyPage(pageFixture: Fixture<PageRouteDescriptor>): void {
         pageFixture.value = this.createPageRouteDescriptor()
+    }
+
+    @given('{PageMenuItem} for {Page} in {App}')
+    public givenPageMenuItemForPage(
+        pageMenuItemFixture: Fixture<Page>,
+        pageFixture: Fixture<PageRouteDescriptor>,
+        appFixture: Fixture<RootViewModelProd>
+    ): void {
+        pageMenuItemFixture.value = appFixture.value
+            .pages
+            .find(page => page.label == pageFixture.value.label)
+    }
+
+    @when('{PageMenuItem} is selected')
+    public whenPageMenuItemIsSelected(pageMenuItemFixture: Fixture<Page>): void {
+        pageMenuItemFixture.value.select()
     }
 
     @given('{App} content is {Page}')
@@ -110,6 +127,11 @@ export class RootStepDefinitions {
     public thenAppContentIsPage(appFixture: Fixture<RootViewModelProd>, pageFixture: Fixture<PageRouteDescriptor>): void {
         const currentPage = this.currentPage.get(appFixture.value)
         expect(currentPage.type).to.equal(pageFixture.value.contentFactory().type)
+    }
+
+    @then('{Browser} path should be {TextValue}')
+    public thenBrowserPathShouldBe(browserFixture: Fixture<FakeBrowser>, expectedPath: string): void {
+        expect(browserFixture.value.document.location.pathname).to.equal(`/${expectedPath}`)
     }
 
     private loadApp(params: { path?: string, pages?: PageRouteDescriptor[] }) {
