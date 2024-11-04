@@ -60,9 +60,9 @@ export class RootStepDefinitions {
     }
 
     @then('{App} content should be Home Page')
-    public thenAppContentIsHomePage(appFixture: Fixture<RootViewModelProd>): void {
+    public thenAppContentShouldBeHomePage(appFixture: Fixture<RootViewModelProd>): void {
         const currentPage = this.currentPage.get(appFixture.value)
-        expect(currentPage.type).to.equal("home")
+        expect(currentPage?.type).to.equal("home")
     }
 
     @given('{Browser}')
@@ -131,12 +131,12 @@ export class RootStepDefinitions {
 
     @then('{Browser} path should be {TextValue}')
     public thenBrowserPathShouldBe(browserFixture: Fixture<FakeBrowser>, expectedPath: string): void {
-        expect(browserFixture.value.document.location.pathname).to.equal(`/${expectedPath}`)
+        expect(browserFixture.value.document.location.pathname).to.equal(expectedPath)
     }
 
     private loadApp(params: { path?: string, pages?: PageRouteDescriptor[] }) {
         const pages = params.pages ?? RootViewModelProd.defaultPages()
-        const path = params.path ?? pages[randomInt(pages.length)].route
+        const path = params.path ?? ""
 
         const app = new RootViewModelProd(
             path,
@@ -163,34 +163,38 @@ export class RootStepDefinitions {
 
     private createPageRouteDescriptor(): PageRouteDescriptor {
         const page = this.createPage()
-        return {label: randomString(), route: randomString(), contentFactory: () => page}
+        return {
+            label: randomString(),
+            route: `/${randomString()}`,
+            contentFactory: () => page
+        }
     }
 
     private createHomePage(): HomePageContent {
         return {
             type: "home",
-            ...TypeMoq.Mock.ofType<HomeViewModel>().object
+            content: TypeMoq.Mock.ofType<HomeViewModel>().object
         }
     }
 
     private createAboutPage(): AboutPageContent {
         return {
             type: "about",
-            ...TypeMoq.Mock.ofType<AboutViewModel>().object
+            content: TypeMoq.Mock.ofType<AboutViewModel>().object
         }
     }
 
     private createContactPage(): ContactPageContent {
         return {
             type: "contact",
-            ...TypeMoq.Mock.ofType<ContactViewModel>().object
+            content: TypeMoq.Mock.ofType<ContactViewModel>().object
         }
     }
 
     private createBlogPage(): BlogPageContent {
         return {
             type: "blog",
-            ...TypeMoq.Mock.ofType<BlogViewModel>().object
+            content: TypeMoq.Mock.ofType<BlogViewModel>().object
         }
     }
 }

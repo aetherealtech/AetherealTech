@@ -32,10 +32,12 @@ function fakeDocument(): FakeDocument {
 type FakeHistory = {
     history: History
     setHistory(history: string[]): void
-    popStateHandler: (ev: PopStateEvent) => void
 }
 
-function fakeHistory(document: FakeDocument): FakeHistory {
+function fakeHistory(
+    document: FakeDocument,
+    popStateHandler: (ev: PopStateEvent) => void
+): FakeHistory {
     const mockHistory = TypeMoq.Mock.ofType<History>()
 
     const history: URL[] = []
@@ -53,8 +55,7 @@ function fakeHistory(document: FakeDocument): FakeHistory {
 
             history.splice(0, Infinity, ...newHistory)
             currentHistoryIndex = history.length
-        },
-        popStateHandler: (_: PopStateEvent) => {}
+        }
     }
 
     mockHistory.setup(h => h.length)
@@ -74,7 +75,7 @@ function fakeHistory(document: FakeDocument): FakeHistory {
         document.currentLocation = newUrl
 
         const event = TypeMoq.Mock.ofType<PopStateEvent>()
-        fakeHistory.popStateHandler(event.object)
+        popStateHandler(event.object)
     }
 
     mockHistory.setup(h => h.go(TypeMoq.It.isAny()))
@@ -122,7 +123,17 @@ type FakeWindow = {
 
 function fakeWindow(document: FakeDocument): FakeWindow {
     const mockWindow = TypeMoq.Mock.ofType<Window & typeof globalThis>()
-    const history = fakeHistory(document)
+
+    const popStateListeners = new Map<object, ((ev: PopStateEvent) => void)>()
+
+    const history = fakeHistory(
+        document,
+        ev => {
+            for (const [_, listener] of popStateListeners) {
+                listener(ev)
+            }
+        }
+    )
 
     const fakeWindow: FakeWindow = {
         window: mockWindow.object,
@@ -136,22 +147,28 @@ function fakeWindow(document: FakeDocument): FakeWindow {
 
     mockWindow.setup(w => w.onpopstate = TypeMoq.It.isAny())
         .callback((handler: ((this: WindowEventHandlers, ev: PopStateEvent) => unknown) | null) => {
-            return history.popStateHandler = ev => {
-                if(handler == null)
-                    return
+            popStateListeners.clear()
 
-                handler.call(fakeWindow.window, ev)
-            };
+            if(handler === null)
+                return
+
+            popStateListeners.set(
+                handler,
+                ev => handler.call(fakeWindow.window, ev)
+            )
         })
 
-    mockWindow.setup(w => w.addEventListener("popstate", TypeMoq.It.isAny()))
-        .callback((_1: keyof WindowEventMap, handler: (this: Window, ev: PopStateEvent) => unknown, _2?: boolean | AddEventListenerOptions) => {
-            const currentPopStateHandler = history.popStateHandler
+    mockWindow.setup(w => w.addEventListener("popstate", TypeMoq.It.isAny(), TypeMoq.It.isAny()))
+        .callback((_1: "popstate", handler: (this: Window, ev: PopStateEvent) => unknown, _2?: boolean | AddEventListenerOptions) => {
+            popStateListeners.set(
+                handler,
+                ev => handler.call(fakeWindow.window, ev)
+            )
+        })
 
-            history.popStateHandler = ev => {
-                currentPopStateHandler(ev)
-                handler.call(fakeWindow.window, ev)
-            }
+    mockWindow.setup(w => w.removeEventListener("popstate", TypeMoq.It.isAny(), TypeMoq.It.isAny()))
+        .callback((_1: "popstate", handler: (this: Window, ev: PopStateEvent) => unknown, _2?: boolean | AddEventListenerOptions) => {
+            popStateListeners.delete(handler)
         })
 
     return fakeWindow

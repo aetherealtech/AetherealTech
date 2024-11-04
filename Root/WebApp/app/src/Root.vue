@@ -34,21 +34,23 @@ function assertNever(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
 
-const contentViewModel: Ref<PageContent | null> = useObservable(viewModel.content)
+const pageContent: Ref<PageContent | null> = useObservable(viewModel.content)
+
+const contentViewModel: Ref<PageContent['content'] | undefined> = computed(() => pageContent.value?.content)
 
 const content: Ref<Component> = computed(() => {
-  const currentContentViewModel = contentViewModel.value
+  const currentPageContent = pageContent.value
 
-  if(currentContentViewModel == null)
+  if(currentPageContent == null)
     return NotFound;
 
-  switch (currentContentViewModel.type) {
+  switch (currentPageContent.type) {
     case 'home': return Home;
     case 'about': return About;
     case 'contact': return Contact;
     case 'blog': return Blog;
     default:
-      return assertNever(currentContentViewModel)
+      return assertNever(currentPageContent)
   }
 })
 
