@@ -1,6 +1,6 @@
 import {defineParameterType} from "@cucumber/cucumber";
 import {Fixtures} from "./Fixtures.js";
-import {type Page, type PageRouteDescriptor, type RootViewModelProd} from "../../src/RootViewModel.js"
+import {type Page, type PageRoute, type RootViewModelProd} from "../../src/RootViewModel.js"
 import {type FakeBrowser} from "./FakeBrowser.js"
 
 defineParameterType({
@@ -26,13 +26,13 @@ defineParameterType({
 defineParameterType({
     name: 'Page',
     regexp: /Page \[([^\[\]]*)]/,
-    transformer: key => Fixtures.shared.getFixture<PageRouteDescriptor>(key)
+    transformer: key => Fixtures.shared.getFixture<PageRoute>(key)
 })
 
 defineParameterType({
     name: 'ListOfPages',
     regexp: /List of Pages \[([^\[\]]*)]/,
-    transformer: key => Fixtures.shared.getFixture<PageRouteDescriptor[]>(key)
+    transformer: key => Fixtures.shared.getFixture<PageRoute[]>(key)
 })
 
 defineParameterType({

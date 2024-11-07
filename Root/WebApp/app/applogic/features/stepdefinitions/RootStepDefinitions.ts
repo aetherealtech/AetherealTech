@@ -9,7 +9,7 @@ import {
     type HomePageContent,
     type Page,
     type PageContent,
-    type PageRouteDescriptor,
+    PageRoute,
     RootViewModelProd
 } from "../../src/RootViewModel.js"
 
@@ -50,12 +50,12 @@ export class RootStepDefinitions {
     }
 
     @given('{App} is loaded with pages {ListOfPages}')
-    public givenAppIsLoadedWithPages(appFixture: Fixture<RootViewModelProd>, pagesFixture: Fixture<PageRouteDescriptor[]>): void {
+    public givenAppIsLoadedWithPages(appFixture: Fixture<RootViewModelProd>, pagesFixture: Fixture<PageRoute[]>): void {
         appFixture.value = this.loadApp({ pages: pagesFixture.value })
     }
 
     @given('Path {Text} of {Page}')
-    public givenPathOfPage(pathFixture: Fixture<string>, pageFixture: Fixture<PageRouteDescriptor>): void {
+    public givenPathOfPage(pathFixture: Fixture<string>, pageFixture: Fixture<PageRoute>): void {
         pathFixture.value = pageFixture.value.route
     }
 
@@ -76,14 +76,14 @@ export class RootStepDefinitions {
     }
 
     @given('Any {Page}')
-    public givenAnyPage(pageFixture: Fixture<PageRouteDescriptor>): void {
+    public givenAnyPage(pageFixture: Fixture<PageRoute>): void {
         pageFixture.value = this.createPageRouteDescriptor()
     }
 
     @given('{PageMenuItem} for {Page} in {App}')
     public givenPageMenuItemForPage(
         pageMenuItemFixture: Fixture<Page>,
-        pageFixture: Fixture<PageRouteDescriptor>,
+        pageFixture: Fixture<PageRoute>,
         appFixture: Fixture<RootViewModelProd>
     ): void {
         pageMenuItemFixture.value = appFixture.value
@@ -97,7 +97,7 @@ export class RootStepDefinitions {
     }
 
     @given('{App} content is {Page}')
-    public givenAppContentIsPage(appFixture: Fixture<RootViewModelProd>, pageFixture: Fixture<PageRouteDescriptor>): void {
+    public givenAppContentIsPage(appFixture: Fixture<RootViewModelProd>, pageFixture: Fixture<PageRoute>): void {
         pageFixture.value = this.createPageRouteDescriptor()
         this.currentPage.set(appFixture.value, pageFixture.value.contentFactory())
     }
@@ -108,13 +108,13 @@ export class RootStepDefinitions {
     }
 
     @given('Any {ListOfPages}')
-    public givenAnyListOfPages(pagesFixture: Fixture<PageRouteDescriptor[]>): void {
+    public givenAnyListOfPages(pagesFixture: Fixture<PageRoute[]>): void {
         pagesFixture.value = new Array(randomInt(4, 8)).fill(null)
             .map(_ => this.createPageRouteDescriptor())
     }
 
     @given('Any {Page} in {ListOfPages}')
-    public givenAnyPageInListOfPages(pageFixture: Fixture<PageRouteDescriptor>, pagesFixture: Fixture<PageRouteDescriptor[]>): void {
+    public givenAnyPageInListOfPages(pageFixture: Fixture<PageRoute>, pagesFixture: Fixture<PageRoute[]>): void {
         pageFixture.value = pagesFixture.value[randomInt(pagesFixture.value.length)]
     }
 
@@ -124,7 +124,7 @@ export class RootStepDefinitions {
     }
 
     @then('{App} content should be {Page}')
-    public thenAppContentIsPage(appFixture: Fixture<RootViewModelProd>, pageFixture: Fixture<PageRouteDescriptor>): void {
+    public thenAppContentIsPage(appFixture: Fixture<RootViewModelProd>, pageFixture: Fixture<PageRoute>): void {
         const currentPage = this.currentPage.get(appFixture.value)
         expect(currentPage.type).to.equal(pageFixture.value.contentFactory().type)
     }
@@ -134,7 +134,7 @@ export class RootStepDefinitions {
         expect(browserFixture.value.document.location.pathname).to.equal(expectedPath)
     }
 
-    private loadApp(params: { path?: string, pages?: PageRouteDescriptor[] }) {
+    private loadApp(params: { path?: string, pages?: PageRoute[] }) {
         const pages = params.pages ?? RootViewModelProd.defaultPages()
         const path = params.path ?? ""
 
@@ -161,13 +161,14 @@ export class RootStepDefinitions {
         }
     }
 
-    private createPageRouteDescriptor(): PageRouteDescriptor {
+    private createPageRouteDescriptor(): PageRoute {
         const page = this.createPage()
-        return {
-            label: randomString(),
-            route: `/${randomString()}`,
-            contentFactory: () => page
-        }
+
+        return new PageRoute(
+            randomString(),
+            `/${randomString()}`,
+            () => page
+        )
     }
 
     private createHomePage(): HomePageContent {

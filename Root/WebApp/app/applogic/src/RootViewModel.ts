@@ -2,7 +2,7 @@ import { type HomeViewModel, HomeViewModelProd } from "homelogic";
 import { type AboutViewModel, AboutViewModelProd } from "aboutlogic";
 import { type ContactViewModel, ContactViewModelProd } from "contactlogic";
 import { type BlogViewModel, BlogViewModelProd } from "bloglogic";
-import { Subject, BehaviorSubject, Observable, fromEvent, map, mergeWith, of, EMPTY } from "rxjs";
+import { Subject, type Observable, fromEvent, map, merge, mergeWith, of, tap, EMPTY } from "rxjs";
 
 export type HomePageContent = {
     type: "home"
@@ -26,9 +26,13 @@ export type BlogPageContent = {
 
 export type PageContent = HomePageContent | AboutPageContent | ContactPageContent | BlogPageContent
 
-export type Page = {
-    label: string
-    select(): void
+export abstract class Page {
+    abstract label: string
+    readonly selectEvents = new Subject<void>()
+
+    select(): void {
+        this.selectEvents.next()
+    }
 }
 
 export type RootViewModel = {
@@ -36,56 +40,47 @@ export type RootViewModel = {
     content: Observable<PageContent | null>
 }
 
-export type PageRouteDescriptor = {
-    label: string;
-    route: string
-    contentFactory: () => PageContent
-}
-
-class PageRoute implements Page {
+export class PageRoute extends Page {
     constructor(
-        descriptor: PageRouteDescriptor,
-        content: Subject<() => PageContent>
+        label: string,
+        route: string,
+        contentFactory: () => PageContent
     ) {
-        this.label = descriptor.label
-        this.route = descriptor.route
-        this.contentFactory = descriptor.contentFactory
+        super()
 
-        this._content = content
+        this.label = label
+        this.route = route
+        this.contentFactory = contentFactory
     }
 
-    label: string;
+    label: string
     route: string
-
     contentFactory: () => PageContent
-
-    select(): void {
-        this._content.next(this.contentFactory)
-        window.history.pushState({}, "", this.route)
-    }
-
-    private readonly _content: Subject<() => PageContent>
 }
 
 export class RootViewModelProd implements RootViewModel {
-    public get pages(): Page[] { return this._pageRoutes }
+    public readonly pages: Page[]
     public readonly content: Observable<PageContent | null>
 
     public constructor(
         path: string,
-        pages: PageRouteDescriptor[] = RootViewModelProd.defaultPages()
+        pages: PageRoute[] = RootViewModelProd.defaultPages()
     ) {
-        const pageSelections = new Subject<() => PageContent>()
+        this.pages = pages
 
-        this._pageRoutes = pages
-            .map(page => new PageRoute(page, pageSelections))
+        const pageSelections = merge(
+            ...pages.map(page => {
+                return page.selectEvents.pipe(
+                    tap({ next: () => window.history.pushState({}, "", page.route) }),
+                    map(() => page.contentFactory)
+                )
+            })
+        )
 
         const pathUpdates = window !== undefined ? fromEvent(
             window,
             'popstate',
-            _ => {
-                return document.location.pathname
-            }
+            _ => document.location.pathname
         ) : EMPTY
 
         // Building the content observable this way is for the specific purpose of tying the subscription to the window popstate events
@@ -97,7 +92,7 @@ export class RootViewModelProd implements RootViewModel {
             .pipe(
                 mergeWith(pathUpdates),
                 map(path => {
-                    const route = this._pageRoutes
+                    const route = pages
                         .find((page) => page.route == path)
 
                     if(route == undefined)
@@ -111,29 +106,29 @@ export class RootViewModelProd implements RootViewModel {
     }
 
     public static defaultPages() {
-        const homePage: PageRouteDescriptor = {
-            label: "Home",
-            route: "/",
-            contentFactory: () => ({type: "home", content: new HomeViewModelProd()})
-        }
+        const homePage = new PageRoute(
+            "Home",
+            "/",
+            () => ({type: "home", content: new HomeViewModelProd()})
+        )
 
-        const aboutPage: PageRouteDescriptor = {
-            label: "About",
-            route: "/about",
-            contentFactory: () => ({type: "about", content: new AboutViewModelProd()})
-        }
+        const aboutPage = new PageRoute(
+            "About",
+            "/about",
+            () => ({type: "about", content: new AboutViewModelProd()})
+        )
 
-        const contactPage: PageRouteDescriptor = {
-            label: "Contact",
-            route: "/contact",
-            contentFactory: () => ({type: "contact", content: new ContactViewModelProd()})
-        }
+        const contactPage = new PageRoute(
+            "Contact",
+            "/contact",
+            () => ({type: "contact", content: new ContactViewModelProd()})
+        )
 
-        const blogPage: PageRouteDescriptor = {
-            label: "Blog",
-            route: "/blog",
-            contentFactory: () => ({type: "blog", content: new BlogViewModelProd()})
-        }
+        const blogPage = new PageRoute(
+            "Blog",
+            "/blog",
+            () => ({type: "blog", content: new BlogViewModelProd()})
+        )
 
         return [
             homePage,
@@ -142,6 +137,4 @@ export class RootViewModelProd implements RootViewModel {
             blogPage,
         ]
     }
-
-    private readonly _pageRoutes: PageRoute[]
 }
