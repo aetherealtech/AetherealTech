@@ -14,7 +14,7 @@ import { Blog } from "blog";
 
 import NotFound from './components/NotFound.vue'
 
-import {useObservable} from "@vueuse/rxjs";
+import { useObservable } from "@vueuse/rxjs";
 
 const props = defineProps<{
   viewModel: RootViewModel;
